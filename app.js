@@ -3,7 +3,7 @@ const { connect } = require("./db/connect");
 const userRouter = require("./routes/user");
 
 const app = express();
-const PORT = process.env.PORT || 3002;
+const PORT = 3002;
 
 // Middleware pour parser le corps des requêtes en JSON
 app.use(express.json());
@@ -24,8 +24,9 @@ connect("mongodb://127.0.0.1:27017/", (error) => {
     process.exit(-1);
   } else {
     console.log("Connexion avec la base de données établie");
-    app.listen(PORT, () => {
-      console.log("Lancé sur le port", PORT);
-    });
   }
+});
+
+app.listen(PORT, () => {
+  console.log("Lancé sur le port", PORT);
 });
