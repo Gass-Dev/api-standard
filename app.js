@@ -18,14 +18,7 @@ app.get("/", (req, res) => {
 });
 
 // Connexion à la base de données
-connect("mongodb://127.0.0.1:27017/", (error) => {
-  if (error) {
-    console.log("Erreur lors de la connexion à la base de données");
-    process.exit(-1);
-  } else {
-    console.log("Connexion avec la base de données établie");
-  }
-});
+connect();
 
 app.listen(PORT, () => {
   console.log("Lancé sur le port", PORT);
