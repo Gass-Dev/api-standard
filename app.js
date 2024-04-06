@@ -1,11 +1,13 @@
 const express = require("express");
 const http = require("http");
 const socketIo = require("socket.io");
+const generateSecretKey = require('./config');
 const { connect } = require("./db/connect");
+require('dotenv').config();
 const userRouter = require("./routes/user");
 
 const app = express();
-const PORT = 3002;
+const PORT = process.env.PORT;
 
 // Middleware pour parser le corps des requêtes en JSON
 app.use(express.json());
@@ -51,3 +53,7 @@ connect();
 server.listen(PORT, () => {
   console.log("Lancé sur le port", PORT);
 });
+
+// Génère une clé secrète
+const secretKey = generateSecretKey();
+console.log('Clé secrète générée :', secretKey);
