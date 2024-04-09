@@ -3,6 +3,7 @@ const router = express.Router();
 const userController = require("../controllers/userController");
 const { loginUser } = require("../services/auth");
 const { registerUser } = require("../services/register");
+// const cacheMiddleware = require("../middlewares/cacheMiddleware.js");
 
 router.get("/users", userController.getUsers);
 router.get("/users/:id", userController.getUserById);

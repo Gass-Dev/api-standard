@@ -1,10 +1,13 @@
 const express = require("express");
 const http = require("http");
-const socketIo = require("socket.io");
-const generateSecretKey = require('./config');
+const { generateSecretKey } = require("./config");
 const { connect } = require("./db/connect");
-require('dotenv').config();
+// const redis = require('redis');
+const cors = require("cors");
+require("dotenv").config();
 const userRouter = require("./routes/user");
+const websocketMiddleware = require("./middlewares/webSocket");
+const cacheMiddleware = require("./middlewares/cacheMiddleware");
 
 const app = express();
 const PORT = process.env.PORT;
@@ -12,33 +15,20 @@ const PORT = process.env.PORT;
 // Middleware pour parser le corps des requêtes en JSON
 app.use(express.json());
 
+// Utiliser le middleware CORS
+app.use(cors());
+
 // Définition des routes
 app.use("/api/v1", userRouter);
 
 // Création du serveur HTTP
 const server = http.createServer(app);
 
-// Initialisation de Socket.io
-const io = socketIo(server);
+// Utilisation du middleware websocket
+websocketMiddleware(server);
 
-// Middleware pour gérer les connexions WebSocket
-io.on("connection", (socket) => {
-  console.log("Nouvelle connexion WebSocket établie");
-
-  // Gérer les événements WebSocket ici...
-
-  // Exemple d'événement de chat
-  socket.on("chat message", (msg) => {
-    console.log("Message reçu:", msg);
-    // Émettre le message à tous les clients connectés
-    io.emit("chat message", msg);
-  });
-
-  // Gérer la déconnexion
-  socket.on("disconnect", () => {
-    console.log("Client déconnecté");
-  });
-});
+// // Utilisez le middleware de cache
+// app.use(cacheMiddleware);
 
 // Route de test
 app.get("/", (req, res) => {
@@ -54,6 +44,21 @@ server.listen(PORT, () => {
   console.log("Lancé sur le port", PORT);
 });
 
-// Génère une clé secrète
+// Générer une clé secrète
 const secretKey = generateSecretKey();
-console.log('Clé secrète générée :', secretKey);
+console.log("Clé secrète générée :", secretKey);
+
+// // Créer une seule instance du client Redis
+// const client = redis.createClient();
+
+// // Gérer les erreurs de connexion Redis
+// client.on("error", (err) => {
+//     console.error("Erreur Redis :", err);
+// });
+
+// // Connexion au client Redis
+// client.on('connect', function() {
+//   console.log('Connected to Redis!');
+// });
+
+// module.exports = client;
